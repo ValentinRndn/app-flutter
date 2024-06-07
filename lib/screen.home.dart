@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:chatbot_filrouge/class/Univers.dart';
 import 'package:chatbot_filrouge/components/navigationBar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http; // Add this import
+import 'package:http/http.dart' as http;
+import 'package:chatbot_filrouge/screen.univers.description.dart';
 
 class ScreenHome extends StatefulWidget {
   const ScreenHome({super.key});
@@ -133,62 +134,77 @@ class _ScreenHomeState extends State<ScreenHome> {
                             children: List.generate(
                               data.length,
                               (index) {
+                                final universId = data[index]['id'].toString();
                                 final imageUrl = data[index]['image'] == ''
                                     ? 'https://via.placeholder.com/175'
                                     : 'https://mds.sprw.dev/image_data/' +
                                         data[index]['image'];
-                                debugPrint('imageUrl: $imageUrl');
-                                return Container(
-                                  padding: const EdgeInsets.only(right: 10),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Container(
-                                        width: 175,
-                                        height: 175,
-                                        decoration: BoxDecoration(
-                                          color: const Color.fromARGB(
-                                              255, 238, 238, 238),
-                                          borderRadius:
-                                              BorderRadius.circular(9),
-                                        ),
-                                        child: ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(9),
-                                          child: FutureBuilder<Uint8List?>(
-                                            future:
-                                                _fetchImage(imageUrl, token!),
-                                            builder: (context, imageSnapshot) {
-                                              if (imageSnapshot
-                                                      .connectionState ==
-                                                  ConnectionState.waiting) {
-                                                return const Center(
-                                                    child:
-                                                        CircularProgressIndicator());
-                                              } else if (imageSnapshot
-                                                      .hasError ||
-                                                  !imageSnapshot.hasData) {
-                                                debugPrint(
-                                                    'Failed to load image imageSnapshot.hasError');
-                                                return Image.network(
-                                                  'https://via.placeholder.com/175',
-                                                  fit: BoxFit.cover,
-                                                );
-                                              } else {
-                                                return Image.memory(
-                                                  imageSnapshot.data!,
-                                                  fit: BoxFit.cover,
-                                                );
-                                              }
-                                            },
-                                          ),
+                                return GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            ScreenUniversDescription(
+                                          universId: universId,
                                         ),
                                       ),
-                                      const SizedBox(height: 8),
-                                      Text(data[index]['name']),
-                                    ],
+                                    );
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.only(right: 10),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Container(
+                                          width: 175,
+                                          height: 175,
+                                          decoration: BoxDecoration(
+                                            color: const Color.fromARGB(
+                                                255, 238, 238, 238),
+                                            borderRadius:
+                                                BorderRadius.circular(9),
+                                          ),
+                                          child: ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(9),
+                                            child: FutureBuilder<Uint8List?>(
+                                              future:
+                                                  _fetchImage(imageUrl, token!),
+                                              builder:
+                                                  (context, imageSnapshot) {
+                                                if (imageSnapshot
+                                                        .connectionState ==
+                                                    ConnectionState.waiting) {
+                                                  return const Center(
+                                                      child:
+                                                          CircularProgressIndicator());
+                                                } else if (imageSnapshot
+                                                        .hasError ||
+                                                    !imageSnapshot.hasData) {
+                                                  debugPrint(
+                                                      'Failed to load image imageSnapshot.hasError');
+                                                  return Image.network(
+                                                    'https://via.placeholder.com/175',
+                                                    fit: BoxFit.cover,
+                                                  );
+                                                } else {
+                                                  return Image.memory(
+                                                    imageSnapshot.data!,
+                                                    fit: BoxFit.cover,
+                                                  );
+                                                }
+                                              },
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Text(data[index]['name']),
+                                      ],
+                                    ),
                                   ),
                                 );
                               },
