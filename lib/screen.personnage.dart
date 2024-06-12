@@ -140,13 +140,12 @@ class _ScreenPersonnageState extends State<ScreenPersonnage> {
                       child: ElevatedButton(
                         onPressed: () => startConversation(token),
                         style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 30, vertical: 15),
+                          padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          primary: Colors.black, // Couleur de fond du bouton
-                          onPrimary: Colors.white, // Couleur du texte du bouton
+                          backgroundColor: Colors.black, // Couleur de fond du bouton
+                          foregroundColor: Colors.white, // Couleur du texte du bouton
                           textStyle: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
@@ -155,6 +154,7 @@ class _ScreenPersonnageState extends State<ScreenPersonnage> {
                         child: Text('Dialoguer avec ${personnage['name']}'),
                       ),
                     ),
+
                   ],
                 ),
               );

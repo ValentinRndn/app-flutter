@@ -21,7 +21,7 @@ class _NavigationBarCustomState extends State<NavigationBarCustom> {
     switch (index) {
       case 0:
         Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (context) => const ScreenHome()));
+            MaterialPageRoute(builder: (context) => const HomeScreen()));
         break;
       case 1:
         Navigator.pushReplacement(context,
@@ -29,7 +29,7 @@ class _NavigationBarCustomState extends State<NavigationBarCustom> {
         break;
       case 2:
         Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (context) => const ScreenMessages()));
+            MaterialPageRoute(builder: (context) => const MessagesScreen()));
         break;
     }
   }
