@@ -1,10 +1,12 @@
-import 'dart:typed_data'; // Add this import
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:chatbot_filrouge/class/Univers.dart';
+import 'package:chatbot_filrouge/class/Conversation.class.dart';
 import 'package:chatbot_filrouge/components/navigationBar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chatbot_filrouge/screen.univers.description.dart';
+import 'package:chatbot_filrouge/screen.personnageConversation.dart';
 
 class ScreenHome extends StatefulWidget {
   const ScreenHome({super.key});
@@ -18,17 +20,6 @@ class _ScreenHomeState extends State<ScreenHome> {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? token = prefs.getString('jwt_token');
     return token;
-  }
-
-  Future<Uint8List?> _fetchImage(String url, String token) async {
-    final response = await http
-        .get(Uri.parse(url), headers: {'Authorization': 'Bearer $token'});
-    if (response.statusCode == 200) {
-      return response.bodyBytes;
-    } else {
-      debugPrint('Failed to load image: ${response.statusCode}');
-      return null;
-    }
   }
 
   @override
@@ -51,10 +42,10 @@ class _ScreenHomeState extends State<ScreenHome> {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return const Center(child: Text('Erreur de chargement du token'));
-          } else if (!snapshot.hasData) {
+          } else if (!snapshot.hasData || snapshot.data == null) {
             return const Center(child: Text('Token non disponible'));
           } else {
-            final String? token = snapshot.data;
+            final String token = snapshot.data!;
             return Padding(
               padding:
                   const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
@@ -71,35 +62,121 @@ class _ScreenHomeState extends State<ScreenHome> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                width: 100,
-                                height: 100,
-                                decoration: BoxDecoration(
-                                  color:
-                                      const Color.fromARGB(255, 238, 238, 238),
-                                  borderRadius: BorderRadius.circular(9),
+                  FutureBuilder<List<Map<String, dynamic>>>(
+                    future:
+                        Conversation().getAllConversationsWithDetails(token),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else if (snapshot.hasError) {
+                        return const Center(
+                            child:
+                                Text('Erreur de chargement des conversations'));
+                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        return const Center(
+                            child: Text('Aucune conversation disponible'));
+                      } else {
+                        final conversations = snapshot.data!;
+                        return SizedBox(
+                          height:
+                              140, // Ajustez cette valeur en fonction de vos besoins
+                          child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: conversations.length,
+                            itemBuilder: (context, index) {
+                              final conversation = conversations[index];
+                              final characterName =
+                                  conversation['character_name'] ??
+                                      'Nom personnage';
+                              final universeName =
+                                  conversation['universe_name'] ??
+                                      'Nom univers';
+                              final characterImage =
+                                  conversation['character_image'] ??
+                                      'https://via.placeholder.com/100';
+                              final characterId =
+                                  conversation['character_id'] ?? 0;
+                              final universId =
+                                  conversation['universe_id'] ?? 0;
+                              final userId = conversation['user_id'] ?? 0;
+
+                              return GestureDetector(
+                                onTap: () {
+                                  debugPrint(
+                                      'conversation[id]: ${conversation['id']}');
+                                  debugPrint(conversations.toString());
+                                  if (characterId != 0 &&
+                                      universId != 0 &&
+                                      userId != 0) {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            ScreenPersonnageConversation(
+                                          characterId: characterId,
+                                          universId: universId,
+                                          userId: userId,
+                                        ),
+                                      ),
+                                    );
+                                  } else {
+                                    // Gérer le cas où l'un des IDs est nul
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                          content: Text(
+                                              'Données de conversation manquantes')),
+                                    );
+                                  }
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.only(right: 10),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        width: 100,
+                                        height: 100,
+                                        decoration: BoxDecoration(
+                                          color: const Color.fromARGB(
+                                              255, 238, 238, 238),
+                                          borderRadius:
+                                              BorderRadius.circular(9),
+                                        ),
+                                        child: ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(9),
+                                          child: CachedNetworkImage(
+                                            imageUrl: characterImage,
+                                            placeholder: (context, url) =>
+                                                const Center(
+                                                    child:
+                                                        CircularProgressIndicator()),
+                                            errorWidget:
+                                                (context, url, error) =>
+                                                    Image.network(
+                                              'https://via.placeholder.com/100',
+                                              fit: BoxFit.cover,
+                                            ),
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                      ),
+                                      Text(characterName),
+                                      Text(
+                                        universeName,
+                                        style:
+                                            const TextStyle(color: Colors.grey),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              const Text("Nom personnage"),
-                              const Text(
-                                "Nom univers",
-                                style: TextStyle(color: Colors.grey),
-                              ),
-                            ],
+                              );
+                            },
                           ),
-                        ),
-                        // Ajoutez d'autres containers ici pour les autres conversations
-                      ],
-                    ),
+                        );
+                      }
+                    },
                   ),
                   const SizedBox(height: 50),
                   const Text(
@@ -110,9 +187,8 @@ class _ScreenHomeState extends State<ScreenHome> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: 20),
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
+                  const SizedBox(height: 10),
+                  Expanded(
                     child: FutureBuilder<List<dynamic>>(
                       future: Univers().getAllUnivers(token),
                       builder: (context, snapshot) {
@@ -129,86 +205,72 @@ class _ScreenHomeState extends State<ScreenHome> {
                               child: Text('Aucun univers disponible'));
                         } else {
                           final data = snapshot.data!;
-                          return Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: List.generate(
-                              data.length,
-                              (index) {
-                                final universId = data[index]['id'].toString();
-                                final imageUrl = data[index]['image'] == ''
-                                    ? 'https://via.placeholder.com/175'
-                                    : 'https://mds.sprw.dev/image_data/' +
-                                        data[index]['image'];
-                                return GestureDetector(
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            ScreenUniversDescription(
-                                          universId: universId,
+                          return ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: data.length,
+                            itemBuilder: (context, index) {
+                              final universId =
+                                  data[index]['id']?.toString() ?? '0';
+                              final imageUrl = (data[index]['image'] == ''
+                                      ? 'https://via.placeholder.com/175'
+                                      : 'https://mds.sprw.dev/image_data/' +
+                                          data[index]['image']) ??
+                                  'https://via.placeholder.com/175';
+                              return GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          ScreenUniversDescription(
+                                        universId: universId,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.only(right: 10),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Container(
+                                        width: 175,
+                                        height: 175,
+                                        decoration: BoxDecoration(
+                                          color: const Color.fromARGB(
+                                              255, 238, 238, 238),
+                                          borderRadius:
+                                              BorderRadius.circular(9),
+                                        ),
+                                        child: ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(9),
+                                          child: CachedNetworkImage(
+                                            imageUrl: imageUrl,
+                                            placeholder: (context, url) =>
+                                                const Center(
+                                                    child:
+                                                        CircularProgressIndicator()),
+                                            errorWidget:
+                                                (context, url, error) =>
+                                                    Image.network(
+                                              'https://via.placeholder.com/175',
+                                              fit: BoxFit.cover,
+                                            ),
+                                            fit: BoxFit.cover,
+                                          ),
                                         ),
                                       ),
-                                    );
-                                  },
-                                  child: Container(
-                                    padding: const EdgeInsets.only(right: 10),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Container(
-                                          width: 175,
-                                          height: 175,
-                                          decoration: BoxDecoration(
-                                            color: const Color.fromARGB(
-                                                255, 238, 238, 238),
-                                            borderRadius:
-                                                BorderRadius.circular(9),
-                                          ),
-                                          child: ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(9),
-                                            child: FutureBuilder<Uint8List?>(
-                                              future:
-                                                  _fetchImage(imageUrl, token!),
-                                              builder:
-                                                  (context, imageSnapshot) {
-                                                if (imageSnapshot
-                                                        .connectionState ==
-                                                    ConnectionState.waiting) {
-                                                  return const Center(
-                                                      child:
-                                                          CircularProgressIndicator());
-                                                } else if (imageSnapshot
-                                                        .hasError ||
-                                                    !imageSnapshot.hasData) {
-                                                  debugPrint(
-                                                      'Failed to load image imageSnapshot.hasError');
-                                                  return Image.network(
-                                                    'https://via.placeholder.com/175',
-                                                    fit: BoxFit.cover,
-                                                  );
-                                                } else {
-                                                  return Image.memory(
-                                                    imageSnapshot.data!,
-                                                    fit: BoxFit.cover,
-                                                  );
-                                                }
-                                              },
-                                            ),
-                                          ),
-                                        ),
-                                        const SizedBox(height: 8),
-                                        Text(data[index]['name']),
-                                      ],
-                                    ),
+                                      const SizedBox(height: 8),
+                                      Text(
+                                          data[index]['name'] ?? 'Nom univers'),
+                                    ],
                                   ),
-                                );
-                              },
-                            ),
+                                ),
+                              );
+                            },
                           );
                         }
                       },

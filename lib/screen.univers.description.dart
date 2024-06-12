@@ -4,6 +4,7 @@ import 'package:chatbot_filrouge/class/Token.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
+import 'package:chatbot_filrouge/screen.personnageList.dart';
 
 class ImageFetcher {
   Future<Uint8List?> fetchImage(String url, String token) async {
@@ -70,6 +71,21 @@ class _ScreenUniversDescriptionState extends State<ScreenUniversDescription> {
               return Scaffold(
                 appBar: AppBar(
                   title: Text(univers['name']),
+                  actions: [
+                    IconButton(
+                      icon: const Icon(Icons.attribution),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ScreenPersonnageList(
+                              universId: widget.universId,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
                 ),
                 body: SingleChildScrollView(
                   padding: const EdgeInsets.symmetric(
@@ -78,37 +94,53 @@ class _ScreenUniversDescriptionState extends State<ScreenUniversDescription> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Center(
-                          child: Column(
-                        children: [
-                          imageUrl != 'https://via.placeholder.com/175'
-                              ? FutureBuilder<Uint8List?>(
-                                  future:
-                                      _imageFetcher.fetchImage(imageUrl, token),
-                                  builder: (context, imageSnapshot) {
-                                    if (imageSnapshot.connectionState ==
-                                        ConnectionState.waiting) {
-                                      return const Center(
-                                          child: CircularProgressIndicator());
-                                    } else if (imageSnapshot.hasError) {
-                                      return Center(
-                                          child: Text(
-                                              'Error loading image: ${imageSnapshot.error}'));
-                                    } else if (!imageSnapshot.hasData ||
-                                        imageSnapshot.data == null) {
-                                      return const Center(
-                                          child: Text('No image found'));
-                                    }
-
-                                    return Image.memory(imageSnapshot.data!);
-                                  },
-                                )
-                              : Image.network(imageUrl),
-                          const SizedBox(height: 10),
-                          Text(univers['name'],
-                              style: const TextStyle(
-                                  fontSize: 24, fontWeight: FontWeight.bold)),
-                        ],
-                      )),
+                        child: Column(
+                          children: [
+                            Container(
+                              width: 375,
+                              height: 375,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(9),
+                                color: Colors.grey[200], // Placeholder color
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(9),
+                                child: imageUrl !=
+                                        'https://via.placeholder.com/175'
+                                    ? FutureBuilder<Uint8List?>(
+                                        future: _imageFetcher.fetchImage(
+                                            imageUrl, token),
+                                        builder: (context, imageSnapshot) {
+                                          if (imageSnapshot.connectionState ==
+                                              ConnectionState.waiting) {
+                                            return const Center(
+                                                child:
+                                                    CircularProgressIndicator());
+                                          } else if (imageSnapshot.hasError ||
+                                              !imageSnapshot.hasData) {
+                                            return Image.network(
+                                              'https://via.placeholder.com/175',
+                                              fit: BoxFit.cover,
+                                            );
+                                          } else {
+                                            return Image.memory(
+                                              imageSnapshot.data!,
+                                              fit: BoxFit.cover,
+                                            );
+                                          }
+                                        },
+                                      )
+                                    : Image.network(imageUrl,
+                                        fit: BoxFit.cover),
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            Text(univers['name'],
+                                style: const TextStyle(
+                                    fontSize: 24, fontWeight: FontWeight.bold)),
+                          ],
+                        ),
+                      ),
                       const SizedBox(height: 10),
                       Text(univers['description'],
                           style: const TextStyle(fontSize: 16)),

@@ -18,9 +18,7 @@ class _ScreenRegisterState extends State<ScreenRegister> {
   TextEditingController prenomController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
-  bool _isLoading = false;
 
-  @override
   void dispose() {
     pseudoController.dispose();
     emailController.dispose();
@@ -31,53 +29,10 @@ class _ScreenRegisterState extends State<ScreenRegister> {
     super.dispose();
   }
 
-  Future<void> _register() async {
-    setState(() {
-      _isLoading = true;
-    });
-
+  void updatePasswordMatch() {
     if (passwordController.text != confirmPasswordController.text) {
-      _showErrorSnackbar("Les mots de passe ne correspondent pas");
-      setState(() {
-        _isLoading = false;
-      });
-      return;
+      print("Passwords do not match");
     }
-
-    var url = Uri.parse('https://mds.sprw.dev/users');
-
-    var body = {
-      'username': pseudoController.text,
-      'email': emailController.text,
-      'lastname': nomController.text,
-      'firstname': prenomController.text,
-      'password': passwordController.text,
-    };
-
-    try {
-      var response = await http.post(url, body: json.encode(body));
-
-      if (response.statusCode == 201 || response.statusCode == 200) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => ScreenLogin()),
-        );
-      } else {
-        _showErrorSnackbar("Erreur: ${response.statusCode}");
-      }
-    } catch (e) {
-      _showErrorSnackbar("Erreur de connexion: $e");
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
-  }
-
-  void _showErrorSnackbar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
   }
 
   @override
@@ -87,128 +42,122 @@ class _ScreenRegisterState extends State<ScreenRegister> {
         title: const Text(
           "S'enregistrer",
           style: TextStyle(
-            fontSize: 28,
-            color: Colors.white,
+            fontSize: 30,
+            color: Color.fromARGB(255, 0, 0, 0),
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: Colors.deepPurple,
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const SizedBox(height: 20),
-              TextField(
-                controller: pseudoController,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.0),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            Container(
+              margin: const EdgeInsets.only(left: 20, right: 20),
+              child: Column(
+                children: [
+                  const SizedBox(height: 20),
+                  TextField(
+                    controller: pseudoController,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      hintText: 'Pseudo',
+                    ),
                   ),
-                  hintText: 'Pseudo',
-                  filled: true,
-                  fillColor: Colors.grey[200],
-                ),
+                  const SizedBox(height: 20),
+                  TextField(
+                    controller: emailController,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      hintText: 'Email',
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  TextField(
+                    controller: nomController,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      hintText: 'Nom',
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  TextField(
+                    controller: prenomController,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      hintText: 'Prénom',
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  TextField(
+                    controller: passwordController,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      hintText: 'Mot de passe',
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  TextField(
+                    controller: confirmPasswordController,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      hintText: 'Confirmation mot de passe',
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 20),
-              TextField(
-                controller: emailController,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.0),
-                  ),
-                  hintText: 'Email',
-                  filled: true,
-                  fillColor: Colors.grey[200],
-                ),
-              ),
-              const SizedBox(height: 20),
-              TextField(
-                controller: nomController,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.0),
-                  ),
-                  hintText: 'Nom',
-                  filled: true,
-                  fillColor: Colors.grey[200],
-                ),
-              ),
-              const SizedBox(height: 20),
-              TextField(
-                controller: prenomController,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.0),
-                  ),
-                  hintText: 'Prénom',
-                  filled: true,
-                  fillColor: Colors.grey[200],
-                ),
-              ),
-              const SizedBox(height: 20),
-              TextField(
-                controller: passwordController,
-                obscureText: true,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.0),
-                  ),
-                  hintText: 'Mot de passe',
-                  filled: true,
-                  fillColor: Colors.grey[200],
-                ),
-              ),
-              const SizedBox(height: 20),
-              TextField(
-                controller: confirmPasswordController,
-                obscureText: true,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.0),
-                  ),
-                  hintText: 'Confirmation mot de passe',
-                  filled: true,
-                  fillColor: Colors.grey[200],
-                ),
-              ),
-              const SizedBox(height: 40),
-              ElevatedButton(
-                onPressed: _isLoading ? null : _register,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.deepPurple,
-                  padding: const EdgeInsets.symmetric(vertical: 15),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                child: _isLoading
-                    ? CircularProgressIndicator(color: Colors.white)
-                    : const Text(
-                        "S'enregistrer",
-                        style: TextStyle(color: Colors.white, fontSize: 18),
+            ),
+            Column(
+              children: [
+                SizedBox(
+                  width: double.infinity,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        var url = Uri.parse('https://mds.sprw.dev/users');
+
+                        var body = {
+                          'username': pseudoController.text,
+                          'email': emailController.text,
+                          'lastname': nomController.text,
+                          'firstname': prenomController.text,
+                          'password': passwordController.text,
+                        };
+
+                        var response =
+                            await http.post(url, body: json.encode(body));
+
+                        if (response.statusCode == 201 ||
+                            response.statusCode == 200) {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ScreenLogin()),
+                          );
+                        } else {
+                          print("Error: ${response.statusCode}");
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.black,
+                        padding: const EdgeInsets.symmetric(vertical: 20),
+                        shape: RoundedRectangleBorder(
+                          borderRadius:
+                              BorderRadius.circular(8), // Moins arrondi
+                        ),
                       ),
-              ),
-              const SizedBox(height: 20),
-              TextButton(
-                onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => ScreenLogin()),
-                  );
-                },
-                child: const Text(
-                  "Déjà un compte ? Se connecter",
-                  style: TextStyle(
-                    color: Colors.deepPurple,
-                    fontSize: 16,
+                      child: const Text(
+                        "S'enregistrer",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ],
-          ),
+              ],
+            ),
+            const SizedBox(height: 20),
+          ],
         ),
       ),
     );

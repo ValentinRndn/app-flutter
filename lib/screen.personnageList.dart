@@ -1,29 +1,64 @@
 import 'package:flutter/material.dart';
-import 'package:chatbot_filrouge/class/Conversation.class.dart';
 import 'package:chatbot_filrouge/class/token.dart';
+import 'package:chatbot_filrouge/class/Personnage.class.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:chatbot_filrouge/screen.personnageConversation.dart';
+import 'package:chatbot_filrouge/screen.personnage.dart';
 
-class ScreenMessages extends StatefulWidget {
-  const ScreenMessages({super.key});
+class ScreenPersonnageList extends StatefulWidget {
+  final String universId;
+
+  const ScreenPersonnageList({super.key, required this.universId});
 
   @override
-  State<ScreenMessages> createState() => _ScreenMessagesState();
+  State<ScreenPersonnageList> createState() => _ScreenPersonnageListState();
 }
 
-class _ScreenMessagesState extends State<ScreenMessages> {
-  final Conversation _conversation = Conversation();
+class _ScreenPersonnageListState extends State<ScreenPersonnageList> {
+  final Personnage _personnage = Personnage();
   final Token _token = Token();
+  final TextEditingController _nameController = TextEditingController();
 
-  void _navigateToConversation(
-      BuildContext context, int characterId, int universId, int userId) {
+  void _showEditModal(BuildContext context, String token, int idUnivers) {
+    _nameController.clear();
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Ajouter un personnage'),
+          content: TextField(
+            controller: _nameController,
+            decoration: const InputDecoration(
+              hintText: 'Nom du personnage',
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Fermer'),
+            ),
+            TextButton(
+              onPressed: () async {
+                await _personnage.createPersonnage(
+                    token, _nameController.text, idUnivers);
+                Navigator.pop(context);
+                setState(() {});
+              },
+              child: const Text('Ajouter'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _navigateToPersonnage(
+      BuildContext context, int universId, int personnageId) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => ScreenPersonnageConversation(
-          characterId: characterId,
+        builder: (context) => ScreenPersonnage(
           universId: universId,
-          userId: userId,
+          personnageId: personnageId,
         ),
       ),
     );
@@ -33,7 +68,29 @@ class _ScreenMessagesState extends State<ScreenMessages> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Conversations'),
+        title: const Text('Personnages de l\'univers'),
+        actions: [
+          FutureBuilder<String?>(
+            future: _token.getToken(),
+            builder: (context, tokenSnapshot) {
+              if (tokenSnapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (tokenSnapshot.hasError) {
+                return Center(child: Text('Error: ${tokenSnapshot.error}'));
+              } else if (!tokenSnapshot.hasData || tokenSnapshot.data == null) {
+                return const Center(child: Text('No token found'));
+              }
+
+              final token = tokenSnapshot.data!;
+              final int universId = int.tryParse(widget.universId) ?? 0;
+
+              return IconButton(
+                icon: const Icon(Icons.add),
+                onPressed: () => _showEditModal(context, token, universId),
+              );
+            },
+          ),
+        ],
       ),
       body: FutureBuilder<String?>(
         future: _token.getToken(),
@@ -47,41 +104,37 @@ class _ScreenMessagesState extends State<ScreenMessages> {
           }
 
           final token = tokenSnapshot.data!;
+          final int universId = int.tryParse(widget.universId) ?? 0;
 
-          return FutureBuilder<List<Map<String, dynamic>>>(
-            future: _conversation.getAllConversationsWithDetails(token),
-            builder: (context, conversationSnapshot) {
-              if (conversationSnapshot.connectionState ==
+          return FutureBuilder<List<dynamic>>(
+            future: _personnage.getAllPersonnage(token, universId),
+            builder: (context, personnageSnapshot) {
+              if (personnageSnapshot.connectionState ==
                   ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
-              } else if (conversationSnapshot.hasError) {
+              } else if (personnageSnapshot.hasError) {
                 return Center(
-                    child: Text('Error: ${conversationSnapshot.error}'));
-              } else if (!conversationSnapshot.hasData ||
-                  conversationSnapshot.data!.isEmpty) {
-                return const Center(child: Text('No conversations found'));
+                    child: Text('Error: ${personnageSnapshot.error}'));
+              } else if (!personnageSnapshot.hasData ||
+                  personnageSnapshot.data == null) {
+                return const Center(child: Text('No data found'));
               }
 
-              final conversations = conversationSnapshot.data!;
+              final personnageList = personnageSnapshot.data!;
 
               return ListView.builder(
-                itemCount: conversations.length,
+                itemCount: personnageList.length,
                 itemBuilder: (context, index) {
-                  final conversation = conversations[index];
-                  final characterName =
-                      conversation['character_name'] ?? 'Nom personnage';
-                  final universeName =
-                      conversation['universe_name'] ?? 'Nom univers';
-                  final characterImage = conversation['character_image'] ??
-                      'https://via.placeholder.com/75';
-                  final characterId = conversation['character_id'] ?? 0;
-                  final universId = conversation['universe_id'] ?? 0;
-                  final userId = conversation['user_id'] ?? 0;
-
+                  final personnage =
+                      personnageList[index] as Map<String, dynamic>;
+                  final imageUrl = personnage['image'] == ''
+                      ? 'https://via.placeholder.com/75'
+                      : 'https://mds.sprw.dev/image_data/' +
+                          personnage['image'];
                   return GestureDetector(
                     onTap: () {
-                      _navigateToConversation(
-                          context, characterId, universId, userId);
+                      _navigateToPersonnage(
+                          context, universId, personnage['id']);
                     },
                     child: Column(
                       children: [
@@ -97,7 +150,7 @@ class _ScreenMessagesState extends State<ScreenMessages> {
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(9),
                                   child: CachedNetworkImage(
-                                    imageUrl: characterImage,
+                                    imageUrl: imageUrl,
                                     placeholder: (context, url) => const Center(
                                         child: CircularProgressIndicator()),
                                     errorWidget: (context, url, error) =>
@@ -117,7 +170,7 @@ class _ScreenMessagesState extends State<ScreenMessages> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      characterName,
+                                      personnage['name'],
                                       style: const TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold,
@@ -125,11 +178,9 @@ class _ScreenMessagesState extends State<ScreenMessages> {
                                     ),
                                     const SizedBox(height: 5),
                                     Text(
-                                      universeName,
+                                      personnage['description'],
                                       maxLines: 2,
                                       overflow: TextOverflow.ellipsis,
-                                      style:
-                                          const TextStyle(color: Colors.grey),
                                     ),
                                     const Divider(),
                                   ],
