@@ -7,7 +7,7 @@ import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 
 class ScreenUnivers extends StatefulWidget {
-  const ScreenUnivers({Key? key}) : super(key: key);
+  const ScreenUnivers({super.key});
 
   @override
   State<ScreenUnivers> createState() => _ScreenUniversState();
@@ -37,7 +37,7 @@ class _ScreenUniversState extends State<ScreenUnivers> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Ajout d\'univers'),
+          title: const Text('Ajout d\'un univers'),
           content: TextField(
             controller: _nameController,
             decoration: const InputDecoration(
@@ -239,8 +239,7 @@ class _ScreenUniversState extends State<ScreenUnivers> {
                                     return false;
                                   },
                                   child: Container(
-                                    margin:
-                                    const EdgeInsets.only(bottom: 10),
+                                    margin: const EdgeInsets.only(bottom: 10),
                                     child: Row(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,

@@ -1,7 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:chatbot_filrouge/screen.home.dart';
 import 'package:chatbot_filrouge/screen.messages.dart';
 import 'package:chatbot_filrouge/screen.univers.dart';
-import 'package:flutter/material.dart';
 
 class NavigationBarCustom extends StatefulWidget {
   const NavigationBarCustom({super.key});
@@ -11,53 +11,47 @@ class NavigationBarCustom extends StatefulWidget {
 }
 
 class _NavigationBarCustomState extends State<NavigationBarCustom> {
-  int _selectedIndex = 0;
-
   void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-
     switch (index) {
       case 0:
-        Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (context) => const HomeScreen()));
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const ScreenHome()),
+        );
         break;
       case 1:
-        Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (context) => const ScreenUnivers()));
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const ScreenUnivers()),
+        );
         break;
       case 2:
-        Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (context) => const MessagesScreen()));
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const ScreenMessages()),
+        );
         break;
     }
-  }
-
-  Color _getItemColor(int index) {
-    return _selectedIndex == index ? Colors.black : Colors.grey;
   }
 
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
       type: BottomNavigationBarType.fixed,
-      items: <BottomNavigationBarItem>[
+      items: const <BottomNavigationBarItem>[
         BottomNavigationBarItem(
-          icon: Icon(Icons.home, color: _getItemColor(0)),
-          label: 'Accueil',
+          icon: Icon(Icons.home_outlined, size: 30, color: Colors.black),
+          label: '',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.public, color: _getItemColor(1)),
-          label: 'Univers',
+          icon: Icon(Icons.public_outlined, size: 30, color: Colors.black),
+          label: '',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.message, color: _getItemColor(2)),
-          label: 'Messages',
+          icon: Icon(Icons.message_outlined, size: 30, color: Colors.black),
+          label: '',
         ),
       ],
-      currentIndex: _selectedIndex,
-      selectedItemColor: Colors.black,
       onTap: _onItemTapped,
     );
   }
