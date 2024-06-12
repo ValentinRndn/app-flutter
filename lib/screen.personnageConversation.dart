@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:chatbot_filrouge/class/Conversation.class.dart';
-import 'package:chatbot_filrouge/class/Token.dart';
-import 'package:chatbot_filrouge/class/Message.class.dart';
-import 'package:chatbot_filrouge/class/Personnage.class.dart';
+import 'package:flutterApp/class/Conversation.class.dart';
+import 'package:flutterApp/class/Token.dart';
+import 'package:flutterApp/class/Message.class.dart';
+import 'package:flutterApp/class/Personnage.class.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class ScreenPersonnageConversation extends StatefulWidget {

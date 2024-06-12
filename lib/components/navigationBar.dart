@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:chatbot_filrouge/screen.home.dart';
-import 'package:chatbot_filrouge/screen.messages.dart';
-import 'package:chatbot_filrouge/screen.univers.dart';
+import 'package:flutterApp/screen.home.dart';
+import 'package:flutterApp/screen.messages.dart';
+import 'package:flutterApp/screen.univers.dart';
 
 class NavigationBarCustom extends StatefulWidget {
   const NavigationBarCustom({super.key});

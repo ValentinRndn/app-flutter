@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:chatbot_filrouge/class/token.dart';
-import 'package:chatbot_filrouge/class/Personnage.class.dart';
+import 'package:flutterApp/class/token.dart';
+import 'package:flutterApp/class/Personnage.class.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:chatbot_filrouge/screen.personnage.dart';
+import 'package:flutterApp/screen.personnage.dart';
 
 class ScreenPersonnageList extends StatefulWidget {
   final String universId;

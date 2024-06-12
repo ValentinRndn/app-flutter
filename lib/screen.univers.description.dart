@@ -1,10 +1,10 @@
 import 'dart:typed_data';
-import 'package:chatbot_filrouge/class/Univers.dart';
-import 'package:chatbot_filrouge/class/Token.dart';
+import 'package:flutterApp/class/Univers.dart';
+import 'package:flutterApp/class/Token.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
-import 'package:chatbot_filrouge/screen.personnageList.dart';
+import 'package:flutterApp/screen.personnageList.dart';
 
 class ImageFetcher {
   Future<Uint8List?> fetchImage(String url, String token) async {

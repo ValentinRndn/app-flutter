@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:chatbot_filrouge/components/navigationBar.dart';
-import 'package:chatbot_filrouge/class/token.dart';
-import 'package:chatbot_filrouge/class/univers.dart';
-import 'package:chatbot_filrouge/screen.univers.description.dart';
+import 'package:flutterApp/components/navigationBar.dart';
+import 'package:flutterApp/class/token.dart';
+import 'package:flutterApp/class/univers.dart';
+import 'package:flutterApp/screen.univers.description.dart';
 import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 

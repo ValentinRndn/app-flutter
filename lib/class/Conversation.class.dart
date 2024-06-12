@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:chatbot_filrouge/class/Univers.dart'; // Importer la classe Univers
+import 'package:flutterApp/class/Univers.dart'; // Importer la classe Univers
 
 class Conversation {
   Future<void> createConversation(

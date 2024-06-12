@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:chatbot_filrouge/components/navigationBar.dart';
-import 'package:chatbot_filrouge/class/Conversation.class.dart';
-import 'package:chatbot_filrouge/class/token.dart';
+import 'package:flutterApp/components/navigationBar.dart';
+import 'package:flutterApp/class/Conversation.class.dart';
+import 'package:flutterApp/class/token.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:chatbot_filrouge/screen.personnageConversation.dart';
+import 'package:flutterApp/screen.personnageConversation.dart';
 
 class ScreenMessages extends StatefulWidget {
   const ScreenMessages({Key? key}) : super(key: key);

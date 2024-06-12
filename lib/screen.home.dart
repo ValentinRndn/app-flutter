@@ -1,12 +1,12 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:chatbot_filrouge/class/Univers.dart';
-import 'package:chatbot_filrouge/class/Conversation.class.dart';
-import 'package:chatbot_filrouge/components/navigationBar.dart';
+import 'package:flutterApp/class/Univers.dart';
+import 'package:flutterApp/class/Conversation.class.dart';
+import 'package:flutterApp/components/navigationBar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:chatbot_filrouge/screen.univers.description.dart';
-import 'package:chatbot_filrouge/screen.personnageConversation.dart';
+import 'package:flutterApp/screen.univers.description.dart';
+import 'package:flutterApp/screen.personnageConversation.dart';
 
 class ScreenHome extends StatefulWidget {
   const ScreenHome({Key? key}) : super(key: key);
