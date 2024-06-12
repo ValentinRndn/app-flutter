@@ -1,12 +1,12 @@
-import 'package:chatbot_filrouge/components/navigationBar.dart';
 import 'package:flutter/material.dart';
+import 'package:chatbot_filrouge/components/navigationBar.dart';
 import 'package:chatbot_filrouge/class/Conversation.class.dart';
 import 'package:chatbot_filrouge/class/token.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chatbot_filrouge/screen.personnageConversation.dart';
 
 class MessagesScreen extends StatefulWidget {
-  const MessagesScreen({super.key});
+  const MessagesScreen({Key? key}) : super(key: key);
 
   @override
   State<MessagesScreen> createState() => _MessagesScreenState();
@@ -38,23 +38,12 @@ class _MessagesScreenState extends State<MessagesScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Conversations',
+          'Messages',
           style: TextStyle(
-<<<<<<< HEAD
-            fontSize: 30,
-            color: Color.fromARGB(255, 0, 0, 0),
+            fontSize: 24,
             fontWeight: FontWeight.bold,
           ),
         ),
-=======
-            fontSize: 28,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
-        backgroundColor: Colors.blueAccent,
-        centerTitle: true,
->>>>>>> b5a832392fd9cc1f914ed5070d73e89a494c9d54
       ),
       body: FutureBuilder<String?>(
         future: _token.getToken(),
@@ -62,9 +51,9 @@ class _MessagesScreenState extends State<MessagesScreen> {
           if (tokenSnapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           } else if (tokenSnapshot.hasError) {
-            return Center(child: Text('Erreur: ${tokenSnapshot.error}'));
+            return Center(child: Text('Error: ${tokenSnapshot.error}'));
           } else if (!tokenSnapshot.hasData || tokenSnapshot.data == null) {
-            return const Center(child: Text('Aucun token trouvé'));
+            return const Center(child: Text('No token found'));
           }
 
           final token = tokenSnapshot.data!;
@@ -75,9 +64,9 @@ class _MessagesScreenState extends State<MessagesScreen> {
               if (conversationSnapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
               } else if (conversationSnapshot.hasError) {
-                return Center(child: Text('Erreur: ${conversationSnapshot.error}'));
+                return Center(child: Text('Error: ${conversationSnapshot.error}'));
               } else if (!conversationSnapshot.hasData || conversationSnapshot.data!.isEmpty) {
-                return const Center(child: Text('Aucune conversation trouvée'));
+                return const Center(child: Text('No conversations found'));
               }
 
               final conversations = conversationSnapshot.data!;
@@ -86,8 +75,8 @@ class _MessagesScreenState extends State<MessagesScreen> {
                 itemCount: conversations.length,
                 itemBuilder: (context, index) {
                   final conversation = conversations[index];
-                  final characterName = conversation['character_name'] ?? 'Nom personnage';
-                  final universeName = conversation['universe_name'] ?? 'Nom univers';
+                  final characterName = conversation['character_name'] ?? 'Character Name';
+                  final universeName = conversation['universe_name'] ?? 'Universe Name';
                   final characterImage = conversation['character_image'] ?? 'https://via.placeholder.com/75';
                   final characterId = conversation['character_id'] ?? 0;
                   final universId = conversation['universe_id'] ?? 0;
@@ -128,7 +117,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
                                   Text(
                                     characterName,
                                     style: const TextStyle(
-                                      fontSize: 18,
+                                      fontSize: 16,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -136,36 +125,16 @@ class _MessagesScreenState extends State<MessagesScreen> {
                                   Text(
                                     universeName,
                                     style: const TextStyle(
-                                      fontSize: 16,
+                                      fontSize: 14,
                                       color: Colors.grey,
                                     ),
-<<<<<<< HEAD
-                                    const SizedBox(height: 5),
-                                    Text(
-                                      universeName,
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                      style:
-                                          const TextStyle(color: Colors.grey),
-                                    ),
-                                  ],
-                                ),
-=======
                                   ),
                                 ],
->>>>>>> b5a832392fd9cc1f914ed5070d73e89a494c9d54
                               ),
                             ),
                           ],
                         ),
-<<<<<<< HEAD
-                        const Divider(
-                          color: Colors.grey,
-                        ),
-                      ],
-=======
                       ),
->>>>>>> b5a832392fd9cc1f914ed5070d73e89a494c9d54
                     ),
                   );
                 },
@@ -178,3 +147,4 @@ class _MessagesScreenState extends State<MessagesScreen> {
     );
   }
 }
+ 

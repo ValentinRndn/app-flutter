@@ -7,7 +7,7 @@ import 'package:chatbot_filrouge/screen.personnage.dart';
 class ScreenPersonnageList extends StatefulWidget {
   final String universId;
 
-  const ScreenPersonnageList({super.key, required this.universId});
+  const ScreenPersonnageList({Key? key, required this.universId}) : super(key: key);
 
   @override
   State<ScreenPersonnageList> createState() => _ScreenPersonnageListState();
@@ -18,7 +18,7 @@ class _ScreenPersonnageListState extends State<ScreenPersonnageList> {
   final Token _token = Token();
   final TextEditingController _nameController = TextEditingController();
 
-  void _showEditModal(BuildContext context, String token, int idUnivers) {
+  void _showAddCharacterModal(BuildContext context, String token, int idUnivers) {
     _nameController.clear();
     showDialog(
       context: context,
@@ -38,8 +38,7 @@ class _ScreenPersonnageListState extends State<ScreenPersonnageList> {
             ),
             TextButton(
               onPressed: () async {
-                await _personnage.createPersonnage(
-                    token, _nameController.text, idUnivers);
+                await _personnage.createPersonnage(token, _nameController.text, idUnivers);
                 Navigator.pop(context);
                 setState(() {});
               },
@@ -51,8 +50,7 @@ class _ScreenPersonnageListState extends State<ScreenPersonnageList> {
     );
   }
 
-  void _navigateToPersonnage(
-      BuildContext context, int universId, int personnageId) {
+  void _navigateToPersonnage(BuildContext context, int universId, int personnageId) {
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -68,7 +66,7 @@ class _ScreenPersonnageListState extends State<ScreenPersonnageList> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Personnages de l\'univers'),
+        title: const Text('Liste des Personnages'),
         actions: [
           FutureBuilder<String?>(
             future: _token.getToken(),
@@ -76,9 +74,9 @@ class _ScreenPersonnageListState extends State<ScreenPersonnageList> {
               if (tokenSnapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
               } else if (tokenSnapshot.hasError) {
-                return Center(child: Text('Error: ${tokenSnapshot.error}'));
+                return Center(child: Text('Erreur: ${tokenSnapshot.error}'));
               } else if (!tokenSnapshot.hasData || tokenSnapshot.data == null) {
-                return const Center(child: Text('No token found'));
+                return const Center(child: Text('Aucun jeton trouvé'));
               }
 
               final token = tokenSnapshot.data!;
@@ -86,7 +84,7 @@ class _ScreenPersonnageListState extends State<ScreenPersonnageList> {
 
               return IconButton(
                 icon: const Icon(Icons.add),
-                onPressed: () => _showEditModal(context, token, universId),
+                onPressed: () => _showAddCharacterModal(context, token, universId),
               );
             },
           ),
@@ -98,9 +96,9 @@ class _ScreenPersonnageListState extends State<ScreenPersonnageList> {
           if (tokenSnapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           } else if (tokenSnapshot.hasError) {
-            return Center(child: Text('Error: ${tokenSnapshot.error}'));
+            return Center(child: Text('Erreur: ${tokenSnapshot.error}'));
           } else if (!tokenSnapshot.hasData || tokenSnapshot.data == null) {
-            return const Center(child: Text('No token found'));
+            return const Center(child: Text('Aucun jeton trouvé'));
           }
 
           final token = tokenSnapshot.data!;
@@ -109,15 +107,12 @@ class _ScreenPersonnageListState extends State<ScreenPersonnageList> {
           return FutureBuilder<List<dynamic>>(
             future: _personnage.getAllPersonnage(token, universId),
             builder: (context, personnageSnapshot) {
-              if (personnageSnapshot.connectionState ==
-                  ConnectionState.waiting) {
+              if (personnageSnapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
               } else if (personnageSnapshot.hasError) {
-                return Center(
-                    child: Text('Error: ${personnageSnapshot.error}'));
-              } else if (!personnageSnapshot.hasData ||
-                  personnageSnapshot.data == null) {
-                return const Center(child: Text('No data found'));
+                return Center(child: Text('Erreur: ${personnageSnapshot.error}'));
+              } else if (!personnageSnapshot.hasData || personnageSnapshot.data == null) {
+                return const Center(child: Text('Aucune donnée trouvée'));
               }
 
               final personnageList = personnageSnapshot.data!;
@@ -125,22 +120,18 @@ class _ScreenPersonnageListState extends State<ScreenPersonnageList> {
               return ListView.builder(
                 itemCount: personnageList.length,
                 itemBuilder: (context, index) {
-                  final personnage =
-                      personnageList[index] as Map<String, dynamic>;
+                  final personnage = personnageList[index] as Map<String, dynamic>;
                   final imageUrl = personnage['image'] == ''
                       ? 'https://via.placeholder.com/75'
-                      : 'https://mds.sprw.dev/image_data/' +
-                          personnage['image'];
+                      : 'https://mds.sprw.dev/image_data/' + personnage['image'];
                   return GestureDetector(
                     onTap: () {
-                      _navigateToPersonnage(
-                          context, universId, personnage['id']);
+                      _navigateToPersonnage(context, universId, personnage['id']);
                     },
                     child: Column(
                       children: [
                         Padding(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 10.0, horizontal: 16.0),
+                          padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -151,10 +142,8 @@ class _ScreenPersonnageListState extends State<ScreenPersonnageList> {
                                   borderRadius: BorderRadius.circular(9),
                                   child: CachedNetworkImage(
                                     imageUrl: imageUrl,
-                                    placeholder: (context, url) => const Center(
-                                        child: CircularProgressIndicator()),
-                                    errorWidget: (context, url, error) =>
-                                        Image.network(
+                                    placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
+                                    errorWidget: (context, url, error) => Image.network(
                                       'https://via.placeholder.com/75',
                                       width: 75,
                                       height: 75,
