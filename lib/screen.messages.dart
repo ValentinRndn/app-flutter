@@ -6,7 +6,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chatbot_filrouge/screen.personnageConversation.dart';
 
 class ScreenMessages extends StatefulWidget {
-  const ScreenMessages({super.key});
+  const ScreenMessages({Key? key}) : super(key: key);
 
   @override
   State<ScreenMessages> createState() => _ScreenMessagesState();
@@ -28,7 +28,6 @@ class _ScreenMessagesState extends State<ScreenMessages> {
         ),
       ),
     ).then((_) {
-      // Refresh the page after returning from conversation screen
       setState(() {});
     });
   }
@@ -41,7 +40,7 @@ class _ScreenMessagesState extends State<ScreenMessages> {
           'Messages',
           style: TextStyle(
             fontSize: 30,
-            color: Color.fromARGB(255, 0, 0, 0),
+            color: Colors.black,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -62,14 +61,11 @@ class _ScreenMessagesState extends State<ScreenMessages> {
           return FutureBuilder<List<Map<String, dynamic>>>(
             future: _conversation.getAllConversationsWithDetails(token),
             builder: (context, conversationSnapshot) {
-              if (conversationSnapshot.connectionState ==
-                  ConnectionState.waiting) {
+              if (conversationSnapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
               } else if (conversationSnapshot.hasError) {
-                return Center(
-                    child: Text('Error: ${conversationSnapshot.error}'));
-              } else if (!conversationSnapshot.hasData ||
-                  conversationSnapshot.data!.isEmpty) {
+                return Center(child: Text('Error: ${conversationSnapshot.error}'));
+              } else if (!conversationSnapshot.hasData || conversationSnapshot.data!.isEmpty) {
                 return const Center(child: Text('No conversations found'));
               }
 
@@ -79,26 +75,21 @@ class _ScreenMessagesState extends State<ScreenMessages> {
                 itemCount: conversations.length,
                 itemBuilder: (context, index) {
                   final conversation = conversations[index];
-                  final characterName =
-                      conversation['character_name'] ?? 'Nom personnage';
-                  final universeName =
-                      conversation['universe_name'] ?? 'Nom univers';
-                  final characterImage = conversation['character_image'] ??
-                      'https://via.placeholder.com/75';
+                  final characterName = conversation['character_name'] ?? 'Nom personnage';
+                  final universeName = conversation['universe_name'] ?? 'Nom univers';
+                  final characterImage = conversation['character_image'] ?? 'https://via.placeholder.com/75';
                   final characterId = conversation['character_id'] ?? 0;
                   final universId = conversation['universe_id'] ?? 0;
                   final userId = conversation['user_id'] ?? 0;
 
                   return GestureDetector(
                     onTap: () {
-                      _navigateToConversation(
-                          context, characterId, universId, userId);
+                      _navigateToConversation(context, characterId, universId, userId);
                     },
                     child: Column(
                       children: [
                         Padding(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 10.0, horizontal: 16.0),
+                          padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -109,10 +100,8 @@ class _ScreenMessagesState extends State<ScreenMessages> {
                                   borderRadius: BorderRadius.circular(9),
                                   child: CachedNetworkImage(
                                     imageUrl: characterImage,
-                                    placeholder: (context, url) => const Center(
-                                        child: CircularProgressIndicator()),
-                                    errorWidget: (context, url, error) =>
-                                        Image.network(
+                                    placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
+                                    errorWidget: (context, url, error) => Image.network(
                                       'https://via.placeholder.com/75',
                                       width: 75,
                                       height: 75,
@@ -139,8 +128,7 @@ class _ScreenMessagesState extends State<ScreenMessages> {
                                       universeName,
                                       maxLines: 2,
                                       overflow: TextOverflow.ellipsis,
-                                      style:
-                                          const TextStyle(color: Colors.grey),
+                                      style: const TextStyle(color: Colors.grey),
                                     ),
                                   ],
                                 ),
@@ -148,9 +136,7 @@ class _ScreenMessagesState extends State<ScreenMessages> {
                             ],
                           ),
                         ),
-                        const Divider(
-                          color: Colors.grey,
-                        ),
+                        const Divider(color: Colors.grey),
                       ],
                     ),
                   );
@@ -164,4 +150,3 @@ class _ScreenMessagesState extends State<ScreenMessages> {
     );
   }
 }
- 

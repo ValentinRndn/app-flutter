@@ -63,7 +63,14 @@ class _ScreenPersonnageState extends State<ScreenPersonnage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Détails du personnage'),
+        title: const Text(
+          'Détails du personnage',
+          style: TextStyle(
+            fontSize: 30,
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ),
       body: FutureBuilder<String?>(
         future: _token.getToken(),
@@ -82,14 +89,11 @@ class _ScreenPersonnageState extends State<ScreenPersonnage> {
             future: _personnage.getSinglePersonnage(
                 token, widget.universId, widget.personnageId),
             builder: (context, personnageSnapshot) {
-              if (personnageSnapshot.connectionState ==
-                  ConnectionState.waiting) {
+              if (personnageSnapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
               } else if (personnageSnapshot.hasError) {
-                return Center(
-                    child: Text('Erreur : ${personnageSnapshot.error}'));
-              } else if (!personnageSnapshot.hasData ||
-                  personnageSnapshot.data == null) {
+                return Center(child: Text('Erreur : ${personnageSnapshot.error}'));
+              } else if (!personnageSnapshot.hasData || personnageSnapshot.data == null) {
                 return const Center(child: Text('Aucune donnée trouvée'));
               }
 
@@ -144,8 +148,8 @@ class _ScreenPersonnageState extends State<ScreenPersonnage> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          backgroundColor: Colors.black, // Couleur de fond du bouton
-                          foregroundColor: Colors.white, // Couleur du texte du bouton
+                          backgroundColor: Colors.black,
+                          foregroundColor: Colors.white,
                           textStyle: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
@@ -154,7 +158,6 @@ class _ScreenPersonnageState extends State<ScreenPersonnage> {
                         child: Text('Dialoguer avec ${personnage['name']}'),
                       ),
                     ),
-
                   ],
                 ),
               );

@@ -128,57 +128,53 @@ class _ScreenPersonnageListState extends State<ScreenPersonnageList> {
                     onTap: () {
                       _navigateToPersonnage(context, universId, personnage['id']);
                     },
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              SizedBox(
-                                width: 75,
-                                height: 75,
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(9),
-                                  child: CachedNetworkImage(
-                                    imageUrl: imageUrl,
-                                    placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
-                                    errorWidget: (context, url, error) => Image.network(
-                                      'https://via.placeholder.com/75',
-                                      width: 75,
-                                      height: 75,
-                                      fit: BoxFit.cover,
-                                    ),
-                                    fit: BoxFit.cover,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            width: 75,
+                            height: 75,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(9),
+                              child: CachedNetworkImage(
+                                imageUrl: imageUrl,
+                                placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
+                                errorWidget: (context, url, error) => Image.network(
+                                  'https://via.placeholder.com/75',
+                                  width: 75,
+                                  height: 75,
+                                  fit: BoxFit.cover,
+                                ),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  personnage['name'],
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                              ),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      personnage['name'],
-                                      style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 5),
-                                    Text(
-                                      personnage['description'],
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                    const Divider(),
-                                  ],
+                                const SizedBox(height: 5),
+                                Text(
+                                  personnage['description'],
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
-                              ),
-                            ],
+                                const Divider(),
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   );
                 },

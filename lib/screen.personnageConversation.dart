@@ -171,8 +171,7 @@ class _ScreenPersonnageConversationState
         }
 
         await _conversation.deleteConversation(token, _conversationId!);
-        Navigator.of(context)
-            .pop(); // Retour à l'écran précédent après suppression
+        Navigator.of(context).pop(); // Retour à l'écran précédent après suppression
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Erreur lors de la suppression : $e')),
@@ -221,7 +220,7 @@ class _ScreenPersonnageConversationState
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _error != null
-              ? Center(child: Text('Error: $_error'))
+              ? Center(child: Text('Erreur : $_error'))
               : Column(
                   children: [
                     Expanded(
